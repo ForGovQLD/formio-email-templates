@@ -357,7 +357,7 @@
     {% endif %}
   {% endfor %}
   {% if hasData %}
-    <h3>{{ (fieldset.legend if fieldset.legend else fieldset.title) }}</h3>
+    <h3>{{ fieldset.legend }}</h3>
   {% endif %}
 {% endmacro %}
 {# Print submission function
@@ -367,9 +367,11 @@
     {% if (component.type === 'button') or (component.type === 'hidden') or (component.type === 'container') or (component.type === 'datasource') or (component.type !== 'fieldset' and not data[component.key]) or (component.customClass and 'no-email' in (component.customClass)) %}
       {#  do nothing #}
     {% else %}
-      {% if (component.type === 'fieldset') or (component.type === 'panel') %}
+      {% if component.type === 'fieldset' %}
         {{ fieldsetLabel(component, data) }}
         {{ printSubmission(component.components, data) }}
+      {% elif component.type === 'panel' %}
+        <p>{{ component.title }}</p> 
       {% else %}
         {% set valueOutput = '' %}
         {% if component.type === 'select' %}
