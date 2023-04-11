@@ -364,10 +364,10 @@
  # Process submitted form fields and print fields with data #}
 {% macro printSubmission(components, data) %}
   {% for component in components %}
-    {% if (component.type === 'button') or (component.type === 'hidden') or (component.type === 'container') or (component.type === 'datasource') or (component.type !== 'fieldset' and not data[component.key]) or (component.customClass and 'no-email' in (component.customClass)) %}
+    {% if (component.type === 'button') or (component.type === 'hidden') or (component.type === 'container') or (component.type === 'datasource') or (component.type !== 'fieldset' and component.type !== 'panel' and not data[component.key]) or (component.customClass and 'no-email' in (component.customClass)) %}
       {#  do nothing #}
     {% else %}
-      {% if (component.type === 'fieldset') or (component.type === 'panel') %}
+      {% if (component.type === 'fieldset' or component.type === 'panel') %}
         {{ fieldsetLabel(component, data) }}
         {{ printSubmission(component.components, data) }}
       {% else %}
