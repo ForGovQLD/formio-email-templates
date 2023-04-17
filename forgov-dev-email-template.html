@@ -360,6 +360,69 @@
     <h3>{{ fieldset.legend if fieldset.legend else fieldset.title }}</h3>
   {% endif %}
 {% endmacro %}
+{# Datagrid label function
+ # Only print datagrid label if its components have data #}
+{% macro datagridLabel(datagrid, data) %}
+  {% set hasData = false %}
+  {% for row in data[datagrid.key] %}
+    {% set i = loop.index0 %}
+    {% for component in datagrid.components %}
+      {% if data[datagrid.key][i][component.key] %}
+        {% set hasData = true %}
+      {% endif %}
+    {% endfor %}
+  {% endfor %}
+  {% if hasData %}
+    <h4>{{ datagrid.label }}</h4>
+  {% endif %}
+{% endmacro %}
+{# Datagrid data function
+ # Print datagrid responses as a table #}
+{% macro datagridData(component, data) %}
+<table>
+  <thead>
+    <tr>
+    {% for field in component.components %}
+    {% if field.type !== 'htmlelement' %}
+      <th>{{ field.label }}</th>
+    {% endif %}
+    {% endfor %}
+    </tr>
+  </thead>
+  <tbody>
+  {% if component.enableRowGroups %}
+  {% set groupStartRow = 0 %}
+  {% for group in component.rowGroups %}
+    <tr><td colspan="{{ component.components | length }}">{{ group.label }}</td></tr>
+    {% for row in range(groupStartRow, groupStartRow + group.numberOfRows) %}
+      <tr>
+      {% for field in component.components %}
+      {% if field.type !== 'htmlelement' %}
+        <td>{{ data[component.key][row][field.key] }}</td>
+      {% endif %}
+      {% endfor %}
+      </tr>
+    {% endfor %}
+    {% set groupStartRow = groupStartRow + group.numberOfRows %}
+  {% endfor %}
+  {% else %}
+    {{ printDatagridData(component, data) }}
+  {% endif %}
+  </tbody>
+  {% macro printDatagridData(component, data) %}
+    {% for row in data[component.key] %}
+      {% set i = loop.index0 %}
+      <tr>
+      {% for field in component.components %}
+      {% if field.type !== 'htmlelement' %}
+        <td>{{ data[component.key][i][field.key] }}</td>
+      {% endif %}
+      {% endfor %}
+      </tr>
+    {% endfor %}
+  {% endmacro %}
+</table>
+{% endmacro %}
 {# Print submission function
  # Process submitted form fields and print fields with data #}
 {% macro printSubmission(components, data) %}
@@ -370,6 +433,9 @@
       {% if (component.type === 'fieldset' or component.type === 'panel') %}
         {{ fieldsetLabel(component, data) }}
         {{ printSubmission(component.components, data) }}
+      {% elif (component.type === 'datagrid') %}
+        {{ datagridLabel(component, data) }}
+        {{ datagridData(component, data) }}
       {% else %}
         {% set valueOutput = '' %}
         {% if component.type === 'select' %}
@@ -383,6 +449,10 @@
         {% elif component.type === 'selectboxes' %}
           {% set valueOutput %}
             {{ boxesValueLabel(component, data) }}
+          {% endset %}
+        {% elif component.type === 'datetime' %}
+          {% set valueOutput %}
+            {{ data[component.key] | date('D MMMM YYYY') }}
           {% endset %}
         {% else %}
           {% set valueOutput %}
