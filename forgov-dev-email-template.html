@@ -277,6 +277,26 @@
     .label {
       font-weight: 600;
     }
+    .table-datagrid {
+      border-collapse: collapse;
+      margin-bottom: 15px;
+    }
+    .table-datagrid,
+    .table-datagrid th,
+    .table-datagrid td {
+      border: 1px solid #000;
+    }
+    .table-datagrid thead th {
+      background-color: #222;
+      color: #fff;
+      text-align: left;
+    }
+    .table-datagrid th, .table-datagrid td {
+      padding: 2px 5px;
+    }
+    .table-datagrid__group td {
+      background-color: #bbb;
+    }
   </style>
 </head>
 <body class="">
@@ -379,7 +399,7 @@
 {# Datagrid data function
  # Print datagrid responses as a table #}
 {% macro datagridData(component, data) %}
-<table>
+<table class="table-datagrid">
   <thead>
     <tr>
     {% for field in component.components %}
@@ -393,7 +413,7 @@
   {% if component.enableRowGroups %}
   {% set groupStartRow = 0 %}
   {% for group in component.rowGroups %}
-    <tr><td colspan="{{ component.components | length }}">{{ group.label }}</td></tr>
+    <tr class="table-datagrid__group"><td colspan="{{ component.components | length }}">{{ group.label }}</td></tr>
     {% for row in range(groupStartRow, groupStartRow + group.numberOfRows) %}
       <tr>
       {% for field in component.components %}
@@ -515,11 +535,12 @@
     <td>&nbsp;</td>
   </tr>
 </table>
-<!-- Debugging data 
+<!-- Debugging data
     {
       "form": {{ form | dump(2) }},
       "data": {{ data | dump(2) }},
-      "components": {{ components | dump(2) }}
+      "components": {{ components | dump(2) }},
+      "content": {{ content | dump(2) }}
     }
 -->
 </body>
