@@ -393,7 +393,7 @@
     {% endfor %}
   {% endfor %}
   {% if hasData %}
-    <h4>{{ datagrid.label }}</h4>
+    <p><span class="label">{{ datagrid.label | striptags }}</span>:</p>
   {% endif %}
 {% endmacro %}
 {# Datagrid data function
