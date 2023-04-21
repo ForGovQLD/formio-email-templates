@@ -419,33 +419,29 @@
   {% for group in component.rowGroups %}
     <tr class="table-datagrid__group"><td colspan="{{ component.components | length }}">{{ group.label }}</td></tr>
     {% for row in range(groupStartRow, groupStartRow + group.numberOfRows) %}
-      <tr>
-      {% for field in component.components %}
-      {% if field.type !== 'htmlelement' %}
-        <td>{{ data[component.key][row][field.key] }}</td>
-      {% endif %}
-      {% endfor %}
-      </tr>
+      {{ datagridRow(component, data, row) }}
     {% endfor %}
     {% set groupStartRow = groupStartRow + group.numberOfRows %}
   {% endfor %}
   {% else %}
-    {{ printDatagridData(component, data) }}
-  {% endif %}
-  </tbody>
-  {% macro printDatagridData(component, data) %}
     {% for row in data[component.key] %}
       {% set i = loop.index0 %}
-      <tr>
-      {% for field in component.components %}
-      {% if field.type !== 'htmlelement' %}
-        <td>{{ data[component.key][i][field.key] }}</td>
-      {% endif %}
-      {% endfor %}
-      </tr>
+        {{ datagridRow(component, data, i) }}
     {% endfor %}
-  {% endmacro %}
+  {% endif %}
+  </tbody>
 </table>
+{% endmacro %}
+{# Datagrid row function
+ # Print each row of datagrid responses #}
+{% macro datagridRow(component, data, index) %}
+  <tr>
+  {% for field in component.components %}
+    {% if field.type !== 'htmlelement' %}
+    <td>{{ data[component.key][index][field.key] }}</td>
+    {% endif %}
+  {% endfor %}
+  </tr>
 {% endmacro %}
 {# Convert date format function
  # Changes date format from dateparser to moment.js syntax (uppercase 'D' and 'Y' characters) #}
