@@ -438,7 +438,7 @@
   <tr>
   {% for field in component.components %}
     {% if field.type !== 'htmlelement' %}
-    <td>{{ data[component.key][index][field.key] }}</td>
+    <td {% if field.customClass %} class="{{ field.customClass }}" {% endif %}>{{ data[component.key][index][field.key] }}</td>
     {% endif %}
   {% endfor %}
   </tr>
