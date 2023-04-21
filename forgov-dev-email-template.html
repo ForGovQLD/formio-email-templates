@@ -400,6 +400,10 @@
             {% set valueOutput %}
               {{ data[component.key] | date(format) }}
             {% endset %}
+          {% elif not component.enableTime %}
+            {% set valueOutput %}
+              {{ data[component.key] | date('D MMMM YYYY') }}
+            {% endset %}
           {% else %}
             {% set valueOutput %}
               {{ data[component.key] | date('D MMMM YYYY hh:mmA') }}
