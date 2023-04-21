@@ -277,6 +277,10 @@
     .label {
       font-weight: 600;
     }
+    #message pre {
+      font-family: inherit;
+      font-size: inherit;
+    }
   </style>
 </head>
 <body class="">
@@ -407,7 +411,7 @@
                 <tr>
                   <td>
                     <h1>{{ form.title }}</h1>
-                    <div id="message">{{ content }}</div>
+                    <div id="message"><pre>{{ content }}</pre></div>
                     <div id="submission">
                       <h2>Submitted form</h2>
                       <div id="submission-data">
