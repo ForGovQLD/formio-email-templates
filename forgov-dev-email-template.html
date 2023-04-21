@@ -395,9 +395,16 @@
             {{ boxesValueLabel(component, data) }}
           {% endset %}
         {% elif component.type === 'datetime' %}
-          {% set valueOutput %}
-            {{ data[component.key] | date('D MMMM YYYY hh:mmA') }}
-          {% endset %}
+          {% if component.format %}
+            {% set format = convertDateFormat(component.format) %}
+            {% set valueOutput %}
+              {{ data[component.key] | date(format) }}
+            {% endset %}
+          {% else %}
+            {% set valueOutput %}
+              {{ data[component.key] | date('D MMMM YYYY hh:mmA') }}
+            {% endset %}
+          {% endif %}
         {% else %}
           {% set valueOutput %}
             {{ data[component.key] }}
