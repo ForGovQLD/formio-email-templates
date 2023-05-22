@@ -300,10 +300,6 @@
     .table-datagrid__group td {
       background-color: #bbb;
     }
-    #message pre {
-      font-family: inherit;
-      font-size: inherit;
-    }
   </style>
 </head>
 <body class="">
@@ -517,7 +513,7 @@
                 <tr>
                   <td>
                     <h1>{{ form.title }}</h1>
-                    <div id="message"><pre>{{ content }}</pre></div>
+                    <div id="message">{{ content }}</div>
                     <div id="submission">
                       <h2>Submitted form</h2>
                       <div id="submission-data">
@@ -534,7 +530,7 @@
           <table role="presentation" border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="content-block">
-                  <span class="apple-link">© The State of Queensland (Queensland Shared Services) {# created | date("YYYY") #}</span>
+                  <span class="apple-link">© The State of Queensland (Queensland Shared Services) {{ created | date("YYYY") }}</span>
                   <br>For government employees | Queensland Government
                 </td>
             </tr>
@@ -557,6 +553,7 @@
 </table>
 <!-- Debugging data
     {
+      "id": {{ id }},
       "form": {{ form | dump(2) }},
       "data": {{ data | dump(2) }},
       "components": {{ components | dump(2) }},
