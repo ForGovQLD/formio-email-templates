@@ -445,7 +445,7 @@
           <table role="presentation" border="0" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="content-block">
-                  <span class="apple-link">© The State of Queensland (Queensland Shared Services) {# created | date("YYYY") #}</span>
+                  <span class="apple-link">© The State of Queensland (Queensland Shared Services) {{ created | date("YYYY") }}</span>
                   <br>For government employees | Queensland Government
                 </td>
             </tr>
@@ -466,7 +466,7 @@
     <td>&nbsp;</td>
   </tr>
 </table>
-<!-- Debugging data 
+<!-- Debugging data
     {
       "form": {{ form | dump(2) }},
       "data": {{ data | dump(2) }},
