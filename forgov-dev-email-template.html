@@ -415,10 +415,18 @@
         </thead>
         <tbody>
           {% if component.enableRowGroups %}
+            {# Make sure group header rows span correct number of columns #}
+            {% set numberOfColumns = 0 %}
+            {% for field in component.components %}
+              {% if field.type !== 'htmlelement' %}
+                {% set numberOfColumns = numberOfColumns + 1 %}
+              {% endif %}
+            {% endfor %}
+            {# Include group header rows before grouped data rows #}
             {% set groupStartRow = 0 %}
             {% for group in component.rowGroups %}
               <tr class="table-datagrid__group">
-                <td colspan="{{ component.components | length }}">{{ group.label }}</td>
+                <td colspan="{{ numberOfColumns }}">{{ group.label }}</td>
               </tr>
               {% for row in range(groupStartRow, groupStartRow + group.numberOfRows) %}
                 {{ datagridRow(component, data, row) }}
