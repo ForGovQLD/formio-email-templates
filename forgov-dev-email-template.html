@@ -449,8 +449,7 @@
      # Changes date format from dateparser to moment.js syntax (uppercase 'D' and 'Y' characters) #}
     {% macro convertDateFormat(initialFormat) %}
       {% set regex = r/([dy])/ %}
-      {% for c in initialFormat %}{{ c if not regex.test(c) else c | upper }}
-      {% endfor %}
+      {% for c in initialFormat %}{{ c if not regex.test(c) else c | upper }}{% endfor %}
     {% endmacro %}
     {# Print submission function
      # Process submitted form fields and print fields with data #}
