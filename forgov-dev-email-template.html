@@ -463,12 +463,16 @@
      # Process submitted form fields and print fields with data #}
     {% macro printSubmission(components, data) %}
       {% for component in components %}
-        {% if (component.type === 'button') or (component.type === 'hidden') or (component.type === 'container') or (component.type === 'datasource') or (component.type !== 'fieldset' and component.type !== 'panel' and not data[component.key]) or (component.customClass and 'no-email' in (component.customClass)) %}
+        {% if (component.type === 'button') or (component.type === 'hidden') or (component.type === 'container') or (component.type === 'datasource') or (component.type !== 'fieldset' and component.type !== 'panel' and component.type !== 'columns' and not data[component.key]) or (component.customClass and 'no-email' in (component.customClass)) %}
           {# do nothing #}
         {% else %}
           {% if component.type === 'fieldset' or component.type === 'panel' %}
             {{ fieldsetLabel(component, data) }}
             {{ printSubmission(component.components, data) }}
+          {% elif (component.type === 'columns') %}
+            {% for column in component.columns %}
+              {{ printSubmission(column.components, data) }}
+            {% endfor %}
           {% elif (component.type === 'datagrid') %}
             {{ datagridLabel(component, data) }}
             {{ datagridData(component, data) }}
