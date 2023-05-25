@@ -491,18 +491,20 @@
               {{ boxesValueLabel(component, data) }}
               {% endset %}
             {% elif component.type === 'datetime' %}
+              {# Form.io always saves datetime values as UTC, so we need to offset +10hrs (QLD time) #}
+              {% set value = data[component.key] | date("add",10,"hours") %}
               {% if component.format %}
                 {% set format = convertDateFormat(component.format) %}
                 {% set valueOutput %}
-                {{ data[component.key] | date(format) }}
+                {{ value | date(format) }}
                 {% endset %}
               {% elif not component.enableTime %}
                 {% set valueOutput %}
-                {{ data[component.key] | date('D MMMM YYYY') }}
+                {{ value | date('D MMMM YYYY') }}
                 {% endset %}
               {% else %}
                 {% set valueOutput %}
-                {{ data[component.key] | date('D MMMM YYYY hh:mmA') }}
+                {{ value | date('D MMMM YYYY hh:mmA') }}
                 {% endset %}
               {% endif %}
             {% else %}
