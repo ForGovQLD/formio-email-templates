@@ -275,10 +275,12 @@
       .label {
         font-weight: 600;
       }
+      .textarea.label {
+        margin-bottom: 4px;
+      }
       .table-datagrid {
         border-collapse: collapse;
       }
-      /* .table-datagrid, */
       .table-datagrid td,
       .table-datagrid th {
         border: 1px solid #000;
@@ -495,6 +497,10 @@
           {% elif (component.type === 'datagrid') %}
             {{ datagridLabel(component, data) }}
             {{ datagridData(component, data) }}
+          {% elif (component.type === 'textarea') %}
+            {# Process textareas to maintain linebreaks/formatting #}
+            <p class="textarea label">{{ component.label | striptags }}</p>
+            <p>{{ data[component.key] | striptags(true) | nl2br | safe }}</p>
           {% else %}
             {% set valueOutput = '' %}
             {% if component.type === 'select' %}
