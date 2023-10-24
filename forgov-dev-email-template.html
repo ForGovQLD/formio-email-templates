@@ -277,9 +277,8 @@
       }
       .table-datagrid {
         border-collapse: collapse;
-        margin-bottom: 15px;
       }
-      .table-datagrid,
+      /* .table-datagrid, */
       .table-datagrid td,
       .table-datagrid th {
         border: 1px solid #000;
@@ -298,6 +297,9 @@
       }
       .table-datagrid__group td {
         background-color: #bbb;
+      }
+      .table-datagrid__spacer td {
+        border: 0;
       }
     </style>
   </head>
@@ -439,6 +441,9 @@
               {{ datagridRow(component, data, i) }}
             {% endfor %}
           {% endif %}
+          <tr class="table-datagrid__spacer">
+            <td colspan="{{ numberOfColumns }}">&nbsp;</td>
+          </tr>
         </tbody>
       </table>
     {% endmacro %}
