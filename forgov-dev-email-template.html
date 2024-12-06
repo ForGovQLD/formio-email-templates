@@ -278,7 +278,6 @@
       .table-datagrid {
         border-collapse: collapse;
       }
-      /* .table-datagrid, */
       .table-datagrid td,
       .table-datagrid th {
         border: 1px solid #000;
@@ -478,6 +477,17 @@
       {% set regex = r/([dy])/ %}
       {% for c in initialFormat %}{{ c if not regex.test(c) else c | upper }}{% endfor %}
     {% endmacro %}
+    {# Number function
+     # Print the number value with format and settings #}
+    {% macro numberValue(component, data) %}
+      {% set value = data[component.key] %}
+      {% if component.delimiter %}
+        {% set value %}
+          {{ value | string | replace(r/\B(?=(\d{3})+(?!\d))/g, ",") }}
+        {% endset %}
+      {% endif %}
+      {{ component.prefix }}{{ value | string | trim }}{{ component.suffix }}
+    {% endmacro %}
     {# Print submission function
      # Process submitted form fields and print fields with data #}
     {% macro printSubmission(components, data) %}
@@ -513,6 +523,10 @@
               {% set valueOutput %}
               {{ datetimeValue(component, data) }}
               {% endset %}
+            {% elif component.type === 'number' %}
+              {% set valueOutput %}
+              {{ numberValue(component, data) }}
+              {% endset %}
             {% else %}
               {% set valueOutput %}
               {{ data[component.key] }}
@@ -536,7 +550,7 @@
                     <tr>
                       <td>
                         <h1>{{ form.title }}</h1>
-                        <div id="message">{{ content }}</div>
+                        <div id="message">{{ content | safe }}</div>
                         <div id="submission">
                           <h2>Submitted form</h2>
                           <div id="submission-data">{{ printSubmission(form.components, data) | trim }}</div>
