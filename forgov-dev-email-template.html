@@ -373,17 +373,17 @@
       {% endfor %}
       {{ selected | join(', ') }}
     {% endmacro %}
-    {# Fieldset label function
-     # Only print fieldset title if its components have data #}
-    {% macro fieldsetLabel(fieldset, data) %}
+    {# Section label function
+     # For components that contain other components, only print the title/label if its components have data #}
+    {% macro sectionLabel(section, data) %}
       {% set hasData = false %}
-      {% for component in fieldset.components %}
+      {% for component in section.components %}
         {% if data[component.key] %}
           {% set hasData = true %}
         {% endif %}
       {% endfor %}
       {% if hasData %}
-        <h3>{{ fieldset.legend if fieldset.legend else fieldset.title }}</h3>
+        <h3>{{ section.legend if section.legend else section.title }}</h3>
       {% endif %}
     {% endmacro %}
     {# Datagrid label function
@@ -486,7 +486,7 @@
           {# do nothing #}
         {% else %}
           {% if component.type === 'fieldset' or component.type === 'panel' %}
-            {{ fieldsetLabel(component, data) }}
+            {{ sectionLabel(component, data) }}
             {{ printSubmission(component.components, data) }}
           {% elif (component.type === 'columns') %}
             {% for column in component.columns %}
