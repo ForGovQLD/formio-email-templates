@@ -378,7 +378,17 @@
     {% macro sectionLabel(section, data) %}
       {% set hasData = false %}
       {% for component in section.components %}
-        {% if data[component.key] %}
+        {% if component.type === 'radio' or component.type === 'selectboxes' %}
+          {# check if radio/checkboxes have selected options #}
+          {% if component.type === 'radio' and
+            radioValueLabel(component, data) | trim | length > 0 %}
+            {% set hasData = true %}
+          {% elif component.type === 'selectboxes' and
+                  boxesValueLabel(component, data) | trim | length > 0 %}
+            {% set hasData = true %}
+          {% endif %}
+        {% elif data[component.key] %}
+          {# otherwise check if component has data #}
           {% set hasData = true %}
         {% endif %}
       {% endfor %}
