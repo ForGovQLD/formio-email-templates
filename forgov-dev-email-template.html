@@ -383,7 +383,7 @@
         {% endif %}
       {% endfor %}
       {% if hasData %}
-        <h3>{{ section.legend if section.legend else section.title }}</h3>
+        <h3>{{ section.legend if section.legend else (section.title if section.title else section.label) }}</h3>
       {% endif %}
     {% endmacro %}
     {# Datagrid label function
