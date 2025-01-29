@@ -528,7 +528,9 @@
               {{ data[component.key] }}
               {% endset %}
             {% endif %}
-            <p><span class="label">{{ component.label | striptags }}: </span>{{ valueOutput | trim }}</p>
+            {% if valueOutput | trim | length > 0 %}
+              <p><span class="label">{{ component.label | striptags }}: </span>{{ valueOutput | trim }}</p>
+            {% endif %}
           {% endif %}
         {% endif %}
       {% endfor %}
