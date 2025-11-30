@@ -303,6 +303,23 @@
       .table-datagrid__spacer td {
         border: 0;
       }
+
+      td.alert {
+        border-color: #444444;
+        border: 2px solid;
+        border-left-width: 8px;
+        padding: 12px 16px;
+      }
+      td.alert.alert-info {
+        border-color: #0085b3;
+      }
+      td.alert.alert-warning {
+        border-color: #ffcc2c;
+      }
+      td.alert.alert-danger,
+      td.alert.alert-error {
+        border-color: #e22339;
+      }
     </style>
   </head>
   <body class="">
@@ -375,17 +392,27 @@
       {% endfor %}
       {{ selected | join(', ') }}
     {% endmacro %}
-    {# Fieldset label function
-     # Only print fieldset title if its components have data #}
-    {% macro fieldsetLabel(fieldset, data) %}
+    {# Section label function
+     # For components that contain other components, only print the title/label if its components have data #}
+    {% macro sectionLabel(section, data) %}
       {% set hasData = false %}
-      {% for component in fieldset.components %}
-        {% if data[component.key] %}
+      {% for component in section.components %}
+        {% if component.type === 'radio' or component.type === 'selectboxes' %}
+          {# check if radio/checkboxes have selected options #}
+          {% if component.type === 'radio' and
+            radioValueLabel(component, data) | trim | length > 0 %}
+            {% set hasData = true %}
+          {% elif component.type === 'selectboxes' and
+                  boxesValueLabel(component, data) | trim | length > 0 %}
+            {% set hasData = true %}
+          {% endif %}
+        {% elif data[component.key] %}
+          {# otherwise check if component has data #}
           {% set hasData = true %}
         {% endif %}
       {% endfor %}
       {% if hasData %}
-        <h3>{{ fieldset.legend if fieldset.legend else fieldset.title }}</h3>
+        <h3>{{ section.legend if section.legend else (section.title if section.title else section.label) }}</h3>
       {% endif %}
     {% endmacro %}
     {# Datagrid label function
@@ -484,13 +511,31 @@
      # Process submitted form fields and print fields with data #}
     {% macro printSubmission(components, data) %}
       {% for component in components %}
-        {% if (component.type === 'button') or (component.type === 'hidden') or (component.type === 'container') or (component.type === 'datasource') or (component.type !== 'fieldset' and component.type !== 'panel' and component.type !== 'columns' and not data[component.key]) or (component.customClass and 'no-email' in (component.customClass)) %}
+        {# Print data from hidden components with custom class 'email-show' #}
+        {% if component.type === 'hidden' and component.customClass === 'email-show' %}
+          {{ data[component.key] | safe }}
+        {% endif %}
+        {% if (component.type === 'button') or (component.type === 'hidden') or (component.type === 'container') or (component.type === 'datasource') or (component.type !== 'fieldset' and component.type !== 'panel' and component.type !== 'columns' and component.type !== 'tabs' and not data[component.key]) or (component.customClass and 'no-email' in (component.customClass)) %}
           {# do nothing #}
         {% else %}
+          {# Components with:
+           # - a single section containing other components
+           # - data properties at base level
+           #}
           {% if component.type === 'fieldset' or component.type === 'panel' %}
-            {{ fieldsetLabel(component, data) }}
+            {{ sectionLabel(component, data) }}
             {{ printSubmission(component.components, data) }}
+          {# Components with:
+           # - multiple sections containing other components
+           # - data properties at base level
+           #}
+          {% elif (component.type === 'tabs') %}
+            {% for section in component.components %}
+              {{ sectionLabel(section, data) }}
+              {{ printSubmission(section.components, data) }}
+            {% endfor %}
           {% elif (component.type === 'columns') %}
+          {# Columns have a custom component property 'columns' #}
             {% for column in component.columns %}
               {{ printSubmission(column.components, data) }}
             {% endfor %}
@@ -524,7 +569,9 @@
               {{ data[component.key] }}
               {% endset %}
             {% endif %}
-            <p><span class="label">{{ component.label | striptags }}: </span>{{ valueOutput | trim }}</p>
+            {% if valueOutput | trim | length > 0 %}
+              <p><span class="label">{{ component.label | striptags }}: </span>{{ valueOutput | trim }}</p>
+            {% endif %}
           {% endif %}
         {% endif %}
       {% endfor %}
@@ -542,7 +589,7 @@
                     <tr>
                       <td>
                         <h1>{{ form.title }}</h1>
-                        <div id="message">{{ content }}</div>
+                        <div id="message">{{ content | safe }}</div>
                         <div id="submission">
                           <h2>Submitted form</h2>
                           <div id="submission-data">{{ printSubmission(form.components, data) | trim }}</div>
