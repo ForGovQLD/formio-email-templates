@@ -275,12 +275,10 @@
       .label {
         font-weight: 600;
       }
-      .textarea.label {
-        margin-bottom: 4px;
-      }
       .table-datagrid {
         border-collapse: collapse;
       }
+      /* .table-datagrid, */
       .table-datagrid td,
       .table-datagrid th {
         border: 1px solid #000;
@@ -319,6 +317,11 @@
       td.alert.alert-danger,
       td.alert.alert-error {
         border-color: #e22339;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        font-family: inherit;
       }
     </style>
   </head>
@@ -362,8 +365,9 @@
           {% endfor %}
           {{ selected | join('; ') }}
         {% else %}
+          {% set selected = data[component.key][prop] or data[component.key] %}
           {% for item in source %}
-            {% if item[prop] === data[component.key] %}
+            {% if item[prop] === selected %}
               {{ item[label] }}
             {% endif %}
           {% endfor %}
@@ -542,10 +546,15 @@
           {% elif (component.type === 'datagrid') %}
             {{ datagridLabel(component, data) }}
             {{ datagridData(component, data) }}
-          {% elif (component.type === 'textarea') %}
-            {# Process textareas to maintain linebreaks/formatting #}
-            <p class="textarea label">{{ component.label | striptags }}</p>
-            <p>{{ data[component.key] | striptags(true) | nl2br | safe }}</p>
+
+          {# Textarea components need special handling
+           # to preserve line breaks and escape HTML.
+           #}
+          {% elif component.type === 'textarea' %}
+            <p><span class="label">{{ component.label | striptags }}: </span></p>
+            <pre>{{ data[component.key]}}</pre>
+
+          {# Components with selectable options #}
           {% else %}
             {% set valueOutput = '' %}
             {% if component.type === 'select' %}
@@ -560,10 +569,14 @@
               {% set valueOutput %}
               {{ boxesValueLabel(component, data) }}
               {% endset %}
+
+            {# Date/time components need to be offset for Queensland time #}
             {% elif component.type === 'datetime' %}
               {% set valueOutput %}
               {{ datetimeValue(component, data) }}
               {% endset %}
+
+            {# Any other components #}
             {% else %}
               {% set valueOutput %}
               {{ data[component.key] }}
