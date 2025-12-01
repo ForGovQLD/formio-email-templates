@@ -318,6 +318,11 @@
       td.alert.alert-error {
         border-color: #e22339;
       }
+
+      pre {
+        white-space: pre-wrap;
+        font-family: inherit;
+      }
     </style>
   </head>
   <body class="">
@@ -360,8 +365,9 @@
           {% endfor %}
           {{ selected | join('; ') }}
         {% else %}
+          {% set selected = data[component.key][prop] or data[component.key] %}
           {% for item in source %}
-            {% if item[prop] === data[component.key] %}
+            {% if item[prop] === selected %}
               {{ item[label] }}
             {% endif %}
           {% endfor %}
@@ -540,6 +546,16 @@
           {% elif (component.type === 'datagrid') %}
             {{ datagridLabel(component, data) }}
             {{ datagridData(component, data) }}
+
+          {# Textarea components need special handling
+           # to preserve line breaks and escape HTML.
+           #}
+          {% elif component.type === 'textarea' %}
+            <p><span class="label">{{ component.label | striptags }}: </span></p>
+            <div>{{ data[component.key] | striptags(true) | escape | nl2br }}</div>
+            <br/>
+
+          {# Components with selectable options #}
           {% else %}
             {% set valueOutput = '' %}
             {% if component.type === 'select' %}
@@ -554,10 +570,14 @@
               {% set valueOutput %}
               {{ boxesValueLabel(component, data) }}
               {% endset %}
+
+            {# Date/time components need to be offset for Queensland time #}
             {% elif component.type === 'datetime' %}
               {% set valueOutput %}
               {{ datetimeValue(component, data) }}
               {% endset %}
+
+            {# Any other components #}
             {% else %}
               {% set valueOutput %}
               {{ data[component.key] }}
