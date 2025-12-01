@@ -552,7 +552,8 @@
            #}
           {% elif component.type === 'textarea' %}
             <p><span class="label">{{ component.label | striptags }}: </span></p>
-            <pre>{{ data[component.key]}}</pre>
+            <div>{{ data[component.key] | striptags(true) | escape | nl2br }}</div>
+            <br/>
 
           {# Components with selectable options #}
           {% else %}
